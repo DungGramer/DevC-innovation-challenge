@@ -4,4 +4,6 @@
 	yarn add expo-constants
 	yarn add react-native-progress-circle
 ```
-![preview](https://i.imgur.com/EaxV4Iz.gif)
+<p align="center">
+	<img src="https://i.imgur.com/EaxV4Iz.gif" width=50% />
+</p>

@@ -1,55 +1,154 @@
-import React, { useState, useEffect } from "react";
-import {
-	View,
-	SafeAreaView,
-	Text,
-	TextInput,
-	StyleSheet,
-	TouchableOpacity,
-} from "react-native";
-import ButtonCovert from "../components/ButtonCovert";
+import React, { useState } from "react";
+import { View, SafeAreaView, Text, StyleSheet, Image } from "react-native";
+import Constants from "expo-constants";
+import { user, com, setColorBackground } from "../config/data";
+
+import ButtonChoice from "../components/ButtonChoice";
+import colors from "../config/color";
+
+
+export let statsData = {
+	played: -1,
+	won: 0,
+	lose: 0,
+	tied: 0,
+};
+
+const configResult = (result) => {
+	let color;
+	if (result == "Victory!") {
+		color = colors.won;
+		statsData.won++;
+	}
+	if (result == "Defeat!") {
+		color = colors.lose;
+		statsData.lose++;
+	}
+	if (result == "Tie game!") {
+		color = colors.tied;
+		statsData.tied++;
+	}
+	statsData.played++;
+	return color;
+};
 
 function Home() {
-	const [convertedCurrencyValue, setFromCurrencyValue] = useState(0);
+	const [userChoice, setUserChoice] = useState("Rock");
+	const [comChoice, setComChoice] = useState("Rock");
+
+	const [gamePrompt, setGamePrompt] = useState("Choose your weapon!");
+
+	const randomComputerChoice = () =>
+		com[Math.floor(Math.random() * com.length)];
+
+	const getRoundOutcome = (userChoice) => {
+		const computerChoice = randomComputerChoice().name;
+		let result;
+
+		if (userChoice === "Rock") {
+			result = computerChoice === "Scissors" ? "Victory!" : "Defeat!";
+		}
+		if (userChoice === "Paper") {
+			result = computerChoice === "Rock" ? "Victory!" : "Defeat!";
+		}
+		if (userChoice === "Scissors") {
+			result = computerChoice === "Paper" ? "Victory!" : "Defeat!";
+		}
+
+		if (userChoice === computerChoice) result = "Tie game!";
+
+		return [result, computerChoice];
+	};
+
+	const onPress = (playerChoice) => {
+		const [result, compChoice] = getRoundOutcome(playerChoice);
+		const newComputerChoice = com.find(
+			(choice) => choice.name == compChoice.toString()
+		).name;
+		setGamePrompt(result);
+		setUserChoice(playerChoice);
+		setComChoice(newComputerChoice);
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
-			<Text>Please enter the value of the currency you want to convert</Text>
-			<TextInput
-				style={styles.TextInput}
-				keyboardType="number-pad"
-				autoFocus
-				selectionColor="red"
-				placeholder="100,000,000 VND"
-				onChangeText={setFromCurrencyValue}
-			/>
-			<ButtonCovert from="VND" to="USD" onPress={(url) => console.log(url)}/>
-			<ButtonCovert from="USD" to="VND" />
-			<Text>Current currency:</Text>
-			<Text>{convertedCurrencyValue}</Text>
-			<Text>Conversion currency:</Text>
-			<Text>{convertedCurrencyValue * 2}</Text>
+			<View style={styles.header}>
+				<Text style={[styles.headerText, { color: configResult(gamePrompt) }]}>
+					{gamePrompt}
+				</Text>
+			</View>
+			<View style={styles.play}>
+				<View
+					style={[
+						styles.playerView,
+						{ backgroundColor: setColorBackground(comChoice) },
+					]}
+				>
+					<Image
+						style={styles.image}
+						source={com.find((x) => x.name == comChoice.toString()).uri}
+					/>
+				</View>
+				<View
+					style={[
+						styles.playerView,
+						{ backgroundColor: setColorBackground(userChoice) },
+					]}
+				>
+					<Image
+						style={styles.image}
+						source={user.find((x) => x.name == userChoice.toString()).uri}
+					/>
+				</View>
+			</View>
+			<View style={styles.choice}>
+				{user.map((choice) => {
+					return (
+						<ButtonChoice
+							key={choice.name}
+							onPress={() => onPress(choice.name)}
+						>
+							{choice.name}
+						</ButtonChoice>
+					);
+				})}
+			</View>
 		</SafeAreaView>
 	);
 }
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		width: "90%",
-		alignItems: "center",
-		alignSelf: "center",
-		marginTop: 50,
+		paddingTop: Constants.statusBarHeight,
 	},
-	TextInput: {
-		marginTop: 20,
-		height: 50,
-		width: "100%",
-		padding: 2,
-		fontSize: 20,
-		borderWidth: 1,
-		backgroundColor: "lightblue",
+	header: {
+		flex: 0.2,
+		justifyContent: "center",
+		marginVertical: 10,
+	},
+	headerText: {
 		textAlign: "center",
+		fontWeight: "bold",
+		fontSize: 25,
+	},
+	play: {
+		flexDirection: "row",
+		height: "50%",
+	},
+	playerView: {
+		flex: 1,
+		height: "100%",
+		justifyContent: "center",
+	},
+	image: {
+		width: "67%",
+		resizeMode: "contain",
+		alignSelf: "center",
+	},
+	choice: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });
-
 export default Home;

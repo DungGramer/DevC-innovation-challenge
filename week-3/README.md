@@ -5,5 +5,5 @@
 	yarn add react-native-progress-circle
 ```
 <p align="center">
-	<img src="https://i.imgur.com/7MYYdJy.mp4" width=50% />
+	<img src="https://media1.giphy.com/media/iIH7F2Yt0913rbxZqg/giphy.gif" width=50% />
 </p>

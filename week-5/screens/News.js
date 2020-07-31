@@ -100,7 +100,7 @@ export const News = () => {
 						data={articles}
 						keyExtractor={(item) => item.title}
 						renderItem={({ item }) => {
-							console.log(item);
+							// console.log(item);
 							return (
 								<Card
 									title={item.title}

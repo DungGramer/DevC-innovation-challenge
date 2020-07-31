@@ -1,0 +1,1 @@
+@react-navigation/bottom-tabs
